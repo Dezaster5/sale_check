@@ -16,3 +16,8 @@ Thumbs.db
 # Локальные настройки редактора
 .vscode/
 .idea/
+
+TZ.md
+FRONTEND_PROMPT.md
+BACKEND_POWERBI_PROMPT.md
+sales-mvp-avatariya.html

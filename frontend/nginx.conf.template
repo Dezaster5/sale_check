@@ -11,18 +11,21 @@ server {
     root  /usr/share/nginx/html;
     index index.html;
 
-    # Скрываем версию nginx и защищаем от кликджекинга
     server_tokens off;
-    add_header X-Frame-Options       "SAMEORIGIN" always;
-    add_header X-Content-Type-Options "nosniff"   always;
-    add_header Referrer-Policy       "same-origin" always;
+
+    # ВНИМАНИЕ на add_header: в nginx директивы НЕ наследуются в location,
+    # где объявлен свой add_header. Поэтому заголовки безопасности повторены
+    # в каждом таком блоке ниже — иначе они молча пропадают именно на HTML,
+    # где нужнее всего.
 
     gzip              on;
     gzip_vary         on;
     gzip_min_length   1024;
     gzip_proxied      any;
+    # Только текстовое. Файл выгрузки .xlsx сюда не попадает — он собирается
+    # в браузере; да и сам по себе это zip, сжимать его повторно незачем.
     gzip_types        text/plain text/css application/javascript application/json
-                      image/svg+xml application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;
+                      image/svg+xml;
 
     # Загрузка Excel и крупные ответы API не должны упираться в буферы
     client_max_body_size 8m;
@@ -56,7 +59,8 @@ server {
     # Имена файлов сборки содержат хеш, поэтому кэшировать их можно надолго
     location /assets/ {
         expires 1y;
-        add_header Cache-Control "public, immutable";
+        add_header Cache-Control          "public, immutable";
+        add_header X-Content-Type-Options "nosniff" always;
         access_log off;
         try_files $uri =404;
     }
@@ -70,6 +74,9 @@ server {
     # на старой версии со ссылками на уже удалённые файлы сборки
     location / {
         try_files $uri $uri/ /index.html;
-        add_header Cache-Control "no-cache, must-revalidate";
+        add_header Cache-Control          "no-cache, must-revalidate";
+        add_header X-Frame-Options        "SAMEORIGIN"  always;
+        add_header X-Content-Type-Options "nosniff"     always;
+        add_header Referrer-Policy        "same-origin" always;
     }
 }
