@@ -2,6 +2,9 @@ node_modules
 dist
 *.log
 
+# Кеш инкрементальной сборки TypeScript — меняется при каждом запуске
+*.tsbuildinfo
+
 # Личные настройки окружения. Готовые варианты лежат
 # в .env.remote / .env.localhost / .env.production и в git есть.
 .env
