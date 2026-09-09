@@ -1,0 +1,19 @@
+# Сборка и запуск фронтенда одной командой:
+#   docker compose up -d --build
+#
+# По умолчанию фронтенд отдаётся на порту 8080 и сам проксирует /api
+# на тестовый бэкенд. Чтобы смотреть на другой бэкенд, поменяйте API_UPSTREAM.
+
+services:
+  frontend:
+    build:
+      context: .
+      args:
+        # Пусто = запросы идут на тот же адрес, nginx проксирует их дальше
+        VITE_API_BASE_URL: ""
+        VITE_UZ_CITY_IDS: ""
+    ports:
+      - "8080:80"
+    environment:
+      API_UPSTREAM: http://188.94.158.71:8000
+    restart: unless-stopped

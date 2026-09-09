@@ -1,0 +1,183 @@
+/* Общие примитивы: кнопки, поля, панели, теги. */
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-m);
+  padding: 24px;
+}
+
+@media (max-width: 900px) {
+  .panel {
+    padding: 14px;
+  }
+}
+
+.btn {
+  border: none;
+  border-radius: var(--radius-s);
+  padding: 10px 18px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13.5px;
+  line-height: 1.4;
+  transition: background 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.primary {
+  background: var(--purple);
+  color: #fff;
+}
+
+.primary:hover:not(:disabled) {
+  background: var(--purple-deep);
+}
+
+.ghost {
+  background: none;
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
+
+.ghost:hover:not(:disabled) {
+  border-color: var(--ink-soft);
+}
+
+.danger {
+  background: var(--danger);
+  color: #fff;
+}
+
+.danger:hover:not(:disabled) {
+  background: #b8323d;
+}
+
+/* поля формы */
+.field {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.label {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+}
+
+.control {
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-s);
+  background: #fff;
+  min-width: 0;
+}
+
+.control:disabled,
+.control[readonly] {
+  background: #f5f3f7;
+  color: var(--ink-soft);
+}
+
+.control.invalid {
+  border-color: var(--danger);
+}
+
+/* статичное значение вместо селекта, когда выбор один */
+.static {
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-s);
+  background: #f5f3f7;
+  color: var(--ink-soft);
+  overflow-wrap: anywhere;
+}
+
+.error {
+  color: var(--danger);
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.hint {
+  color: var(--ink-soft);
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+/* баннеры */
+.banner {
+  border-radius: var(--radius-s);
+  padding: 13px 15px;
+  font-size: 13.5px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.bannerWarn {
+  background: #f8ecff;
+  border: 1px solid #d9a9f5;
+  color: #5c1b8a;
+}
+
+.bannerError {
+  background: var(--danger-tint);
+  border: 1px solid var(--danger-line);
+  color: #8a2530;
+}
+
+/* теги парка и услуги */
+.parkTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  overflow-wrap: break-word;
+}
+
+.swatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.serviceTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  padding: 3px 9px;
+  border-radius: 100px;
+  background: var(--tag-tint, #eee);
+  color: var(--tag-color, #333);
+  overflow-wrap: break-word;
+}
+
+.serviceTag .swatch {
+  width: 7px;
+  height: 7px;
+  background: var(--tag-color, #333);
+}
+
+/* Тач: минимальная площадь нажатия. 40px и меньше промахиваются мимо пальца. */
+@media (pointer: coarse), (max-width: 900px) {
+  .btn {
+    min-height: 48px;
+    padding: 12px 18px;
+  }
+
+  .control,
+  .static {
+    min-height: 48px;
+  }
+}

@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AVATARIYA · Кабинет арендодателя</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#EAEAEA;
+    --panel:#FFFFFF;
+    --ink:#17121C;
+    --ink-soft:#6B6473;
+    --line:#E1DCE6;
+
+    --purple-deep:#6A02C8;
+    --purple:#780BDB;
+    --purple-bright:#9520FF;
+    --purple-tint:#F3E9FC;
+
+    --ice:#0047BB;
+    --water:#0072CE;
+    --forest:#008C15;
+    --desert:#FF8200;
+    --rock:#AE2573;
+
+    --danger:#D64550;
+    --danger-tint:#FBE7E8;
+
+    --radius-s:6px;
+    --radius-m:12px;
+    --font-display:'Montserrat', sans-serif;
+    --font-body:'Inter', sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:14.5px;line-height:1.5;}
+  button, input, select{font-family:inherit;font-size:inherit;color:inherit;}
+
+  .app{display:grid;grid-template-columns:264px 1fr;min-height:100vh;}
+  @media (max-width: 840px){ .app{grid-template-columns:1fr;} }
+
+  /* ---- Sidebar ---- */
+  .sidebar{background:#150A22;color:#E9E3EF;padding:26px 20px;display:flex;flex-direction:column;gap:26px;}
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand svg{flex:none;}
+  .brand .word{font-family:var(--font-display);font-weight:900;font-size:19px;letter-spacing:.3px;color:#fff;}
+  .brand .sub{font-size:11.5px;color:#9C8FB0;margin-top:2px;}
+
+  .nav{display:flex;flex-direction:column;gap:4px;margin-top:4px;}
+  .nav button{
+    text-align:left;background:none;border:none;color:#C9BEDC;
+    padding:10px 12px;border-radius:var(--radius-s);cursor:pointer;
+    display:flex;align-items:center;gap:10px;font-size:14.5px;font-weight:500;
+  }
+  .nav button .dot{width:7px;height:7px;border-radius:50%;background:#4A3E5C;flex:none;}
+  .nav button.active{background:rgba(149,32,255,.16);color:#fff;}
+  .nav button.active .dot{background:var(--purple-bright);box-shadow:0 0 0 4px rgba(149,32,255,.25);}
+  .nav button:hover{color:#fff;}
+
+  .role-box{margin-top:auto;display:flex;flex-direction:column;gap:10px;padding-top:18px;border-top:1px solid rgba(255,255,255,.1);}
+  .role-box label{font-size:11.5px;color:#9C8FB0;}
+  .role-box select{width:100%;padding:9px 10px;border-radius:var(--radius-s);border:1px solid #34243F;background:#1E1129;color:#fff;}
+  .rights{display:flex;flex-wrap:wrap;gap:6px;}
+  .chip{font-size:11px;padding:3px 8px;border-radius:100px;border:1px solid #34243F;color:#8A7C9C;}
+  .chip.on{border-color:rgba(149,32,255,.55);color:#D9B8FF;background:rgba(149,32,255,.14);}
+
+  .roadmap{font-size:11.5px;color:#786A8C;line-height:1.55;}
+  .roadmap b{color:#9C8FB0;font-weight:600;}
+
+  /* ---- Main ---- */
+  .main{padding:30px 36px 60px;max-width:1000px;}
+  @media (max-width:600px){ .main{padding:20px;} }
+
+  .page-meta{font-size:12px;color:var(--ink-soft);margin-bottom:14px;}
+  .page-head{display:flex;gap:18px;align-items:flex-start;margin-bottom:26px;}
+  .page-index{
+    font-family:var(--font-display);font-weight:900;font-size:46px;line-height:1;
+    color:var(--purple);
+  }
+  .page-head h1{font-family:var(--font-display);font-weight:800;font-size:22px;margin:2px 0 5px;}
+  .page-head .lede{color:var(--ink-soft);margin:0;font-size:13.5px;}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius-m);padding:24px;}
+
+  /* form */
+  .field-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;align-items:end;}
+  @media (max-width:900px){ .field-grid{grid-template-columns:repeat(2,1fr);} }
+  .field label{display:block;font-size:12.5px;color:var(--ink-soft);margin-bottom:6px;}
+  .field input, .field select{
+    width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:var(--radius-s);background:#fff;
+  }
+  .field input:disabled, .field select:disabled{background:#F5F3F7;color:var(--ink-soft);}
+  .field input:focus, .field select:focus{outline:2px solid var(--purple-bright);outline-offset:1px;}
+  .field.readout .stub{
+    border:1px dashed #C9A9EE;border-radius:var(--radius-s);padding:9px 10px;
+    background:var(--purple-tint);font-family:var(--font-display);font-weight:800;color:var(--purple-deep);
+    transition:transform .15s ease;
+  }
+  .field.readout .stub.pulse{transform:scale(1.03);}
+  .error-text{color:var(--danger);font-size:12px;margin-top:5px;}
+
+  .form-actions{margin-top:20px;display:flex;gap:10px;align-items:center;}
+  .btn{border:none;border-radius:var(--radius-s);padding:10px 18px;cursor:pointer;font-weight:600;font-size:13.5px;}
+  .btn-primary{background:var(--purple);color:#fff;}
+  .btn-primary:hover{background:var(--purple-deep);}
+  .btn-ghost{background:none;border:1px solid var(--line);color:var(--ink);}
+  .btn-ghost:hover{border-color:var(--ink-soft);}
+  .editing-flag{font-size:12.5px;color:var(--purple-deep);}
+
+  .banner{margin-top:16px;border-radius:var(--radius-s);padding:13px 15px;font-size:13.5px;
+    display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+  .banner.warn{background:#F8ECFF;border:1px solid #D9A9F5;color:#5C1B8A;}
+  .banner.err{background:var(--danger-tint);border:1px solid #EFB3B8;color:#8A2530;}
+  .banner-actions{display:flex;gap:8px;}
+  .banner-actions button{padding:6px 12px;font-size:12.5px;}
+
+  .toast{position:fixed;bottom:24px;right:24px;background:#150A22;color:#fff;padding:12px 18px;
+    border-radius:var(--radius-s);font-size:13.5px;box-shadow:0 10px 26px rgba(20,5,40,.28);
+    display:flex;align-items:center;gap:10px;transform:translateY(12px);opacity:0;transition:all .25s ease;pointer-events:none;}
+  .toast.show{transform:translateY(0);opacity:1;}
+  .toast .tick{color:var(--purple-bright);}
+
+  /* history */
+  .filters{display:flex;gap:14px;flex-wrap:wrap;align-items:end;margin-bottom:18px;}
+  .filters .field{min-width:150px;}
+  .filters .reset{margin-left:auto;}
+
+  table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  thead th{text-align:left;font-weight:600;color:var(--ink-soft);border-bottom:1px solid var(--line);padding:8px 10px;font-size:12.5px;}
+  tbody td{padding:10px;border-bottom:1px solid #F0EDF3;vertical-align:middle;}
+  tbody tr:hover{background:#FAF8FC;}
+  .park-tag{display:inline-flex;align-items:center;gap:7px;font-size:13px;}
+  .park-tag .sw{width:8px;height:8px;border-radius:50%;flex:none;}
+  .svc-tag{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;padding:3px 9px;border-radius:100px;background:var(--tint,#EEE);color:var(--col,#333);}
+  .svc-tag .sw{width:7px;height:7px;border-radius:50%;background:var(--col,#333);}
+  .row-actions{display:flex;gap:6px;}
+  .icon-btn{border:1px solid var(--line);background:#fff;border-radius:var(--radius-s);padding:5px 9px;cursor:pointer;font-size:12px;}
+  .icon-btn:hover{border-color:var(--ink-soft);}
+  .icon-btn.danger{color:var(--danger);}
+  .muted-cell{color:var(--ink-soft);}
+  .empty-row td{text-align:center;color:var(--ink-soft);padding:34px 10px;}
+
+  .totals{display:flex;gap:28px;padding-top:14px;margin-top:2px;border-top:2px solid var(--line);}
+  .totals .t-label{font-size:12px;color:var(--ink-soft);font-weight:500;display:block;}
+  .totals .t-value{font-family:var(--font-display);font-size:18px;font-weight:800;}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <svg width="38" height="30" viewBox="0 0 120 90">
+        <ellipse cx="60" cy="45" rx="52" ry="24" fill="none" stroke="#9520FF" stroke-width="7" transform="rotate(-14 60 45)"/>
+        <ellipse cx="60" cy="45" rx="36" ry="16" fill="none" stroke="#780BDB" stroke-width="7" transform="rotate(-14 60 45)"/>
+        <ellipse cx="60" cy="45" rx="18" ry="8"  fill="none" stroke="#6A02C8" stroke-width="7" transform="rotate(-14 60 45)"/>
+      </svg>
+      <div>
+        <div class="word">AVATARIYA</div>
+        <div class="sub">Кабинет арендодателя</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <button class="active" data-tab="sales"><span class="dot"></span> Продажи</button>
+      <button data-tab="history"><span class="dot"></span> История продаж</button>
+    </nav>
+
+    <div class="role-box">
+      <div>
+        <label for="userSelect">Войти как</label>
+        <select id="userSelect"></select>
+      </div>
+      <div class="rights" id="rightsChips"></div>
+    </div>
+
+    <p class="roadmap"><b>Этап 1</b> (этот MVP): дневная агрегированная фиксация продаж по мирам парка.<br><b>Этап 2</b> (план): привязка продажи к гостю.</p>
+  </aside>
+
+  <main class="main">
+
+    <!-- SALES TAB -->
+    <section id="tab-sales">
+      <p class="page-meta">Avatariya · Кабинет арендодателя</p>
+      <div class="page-head">
+        <span class="page-index">01</span>
+        <div>
+          <h1>Продажи</h1>
+          <p class="lede">Внесите итоговые продажи за день по услуге и миру парка.</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <form id="saleForm" novalidate>
+          <div class="field-grid">
+            <div class="field">
+              <label for="f-date">Дата продажи</label>
+              <input type="date" id="f-date" required>
+              <div class="error-text" id="err-date"></div>
+            </div>
+            <div class="field">
+              <label for="f-park">Мир парка</label>
+              <select id="f-park" required></select>
+            </div>
+            <div class="field">
+              <label for="f-service">Услуга</label>
+              <select id="f-service" required></select>
+            </div>
+            <div class="field">
+              <label for="f-count">Количество</label>
+              <input type="number" id="f-count" min="1" step="1" placeholder="0" required>
+              <div class="error-text" id="err-count"></div>
+            </div>
+            <div class="field">
+              <label for="f-price">Цена, ₸</label>
+              <input type="number" id="f-price" min="0" step="1" placeholder="0" required>
+              <div class="error-text" id="err-price"></div>
+            </div>
+          </div>
+
+          <div class="field-grid" style="margin-top:16px;grid-template-columns:220px 1fr;">
+            <div class="field readout">
+              <label>Стоимость (авторасчёт)</label>
+              <div class="stub" id="f-sum">0 ₸</div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="saveBtn">Сохранить продажу</button>
+            <button type="button" class="btn btn-ghost" id="cancelEditBtn" style="display:none;">Отменить редактирование</button>
+            <span class="editing-flag" id="editingFlag"></span>
+          </div>
+
+          <div id="duplicateBanner"></div>
+        </form>
+      </div>
+    </section>
+
+    <!-- HISTORY TAB -->
+    <section id="tab-history" style="display:none;">
+      <p class="page-meta">Avatariya · Кабинет арендодателя</p>
+      <div class="page-head">
+        <span class="page-index">02</span>
+        <div>
+          <h1>История продаж</h1>
+          <p class="lede">Продажи в рамках миров парка и услуг, доступных текущей роли.</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="filters">
+          <div class="field">
+            <label for="h-from">Период с</label>
+            <input type="date" id="h-from">
+          </div>
+          <div class="field">
+            <label for="h-to">по</label>
+            <input type="date" id="h-to">
+          </div>
+          <div class="field">
+            <label for="h-park">Мир парка</label>
+            <select id="h-park"></select>
+          </div>
+          <div class="field">
+            <label for="h-service">Услуга</label>
+            <select id="h-service"></select>
+          </div>
+          <button class="btn btn-ghost reset" id="resetFilters">Сбросить фильтры</button>
+        </div>
+
+        <table>
+          <thead>
+            <tr><th>Дата</th><th>Мир парка</th><th>Услуга</th><th>Кол-во</th><th>Цена</th><th>Сумма</th><th>Пользователь</th><th></th></tr>
+          </thead>
+          <tbody id="historyBody"></tbody>
+        </table>
+
+        <div class="totals">
+          <div><span class="t-label">Общее количество</span><span class="t-value" id="totalCount">0</span></div>
+          <div><span class="t-label">Общая сумма продаж</span><span class="t-value" id="totalSum">0 ₸</span></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div class="toast" id="toast"><span class="tick">✓</span><span id="toastText">Сохранено</span></div>
+
+<script>
+/* ---------- Reference data (по брендбуку AVATARIYA) ---------- */
+const PARKS = [
+  {id:'ice',    name:'Ice World',    color:'#0047BB'},
+  {id:'water',  name:'Water World',  color:'#0072CE'},
+  {id:'forest', name:'Forest World', color:'#008C15'},
+  {id:'desert', name:'Desert World', color:'#FF8200'},
+  {id:'rock',   name:'Rock World',   color:'#AE2573'},
+];
+const SERVICES = [
+  {id:'aquagrim', name:'Аквагрим', color:'#6A02C8'},
+  {id:'photo',    name:'Фото',     color:'#780BDB'},
+  {id:'vr',       name:'VR',       color:'#9520FF'},
+];
+const USERS = [
+  {id:1, name:'Иван Аквагримов', parks:['rock'], services:['aquagrim'],
+    canPast:false, canChangeDate:false, canEdit:false, canDelete:false},
+  {id:2, name:'Оксана Фотограф', parks:['ice','water'], services:['photo'],
+    canPast:false, canChangeDate:false, canEdit:false, canDelete:false},
+  {id:3, name:'Дамир VR', parks:['ice','water','forest','desert','rock'], services:['vr'],
+    canPast:true, canChangeDate:false, canEdit:false, canDelete:false},
+  {id:4, name:'Администратор', parks:['ice','water','forest','desert','rock'], services:['aquagrim','photo','vr'],
+    canPast:true, canChangeDate:true, canEdit:true, canDelete:true},
+];
+
+/* ---------- Helpers ---------- */
+function isoDaysAgo(n){ const d=new Date(); d.setDate(d.getDate()-n); return d.toISOString().slice(0,10); }
+function todayIso(){ return isoDaysAgo(0); }
+function park(id){ return PARKS.find(p=>p.id===id); }
+function service(id){ return SERVICES.find(s=>s.id===id); }
+function money(n){ return n.toLocaleString('ru-RU') + ' ₸'; }
+function userById(id){ return USERS.find(u=>u.id===id); }
+
+/* ---------- State ---------- */
+let currentUserId = 1;
+let editingId = null;
+let nextId = 14;
+
+let sales = [
+  {id:1,  userId:1, parkId:'rock',   serviceId:'aquagrim', date:isoDaysAgo(1), price:3000, count:5},
+  {id:2,  userId:1, parkId:'rock',   serviceId:'aquagrim', date:isoDaysAgo(2), price:3000, count:8},
+  {id:3,  userId:1, parkId:'rock',   serviceId:'aquagrim', date:isoDaysAgo(4), price:3500, count:3},
+  {id:4,  userId:1, parkId:'rock',   serviceId:'aquagrim', date:isoDaysAgo(6), price:3000, count:4},
+  {id:5,  userId:1, parkId:'rock',   serviceId:'aquagrim', date:todayIso(),   price:3000, count:6},
+  {id:6,  userId:2, parkId:'ice',    serviceId:'photo',    date:isoDaysAgo(1), price:5000, count:4},
+  {id:7,  userId:2, parkId:'water',  serviceId:'photo',    date:isoDaysAgo(2), price:5000, count:6},
+  {id:8,  userId:2, parkId:'ice',    serviceId:'photo',    date:isoDaysAgo(3), price:5500, count:2},
+  {id:9,  userId:2, parkId:'water',  serviceId:'photo',    date:isoDaysAgo(6), price:5000, count:3},
+  {id:10, userId:3, parkId:'ice',    serviceId:'vr',       date:isoDaysAgo(1), price:4000, count:10},
+  {id:11, userId:3, parkId:'forest', serviceId:'vr',       date:isoDaysAgo(2), price:4000, count:7},
+  {id:12, userId:3, parkId:'desert', serviceId:'vr',       date:isoDaysAgo(3), price:4500, count:5},
+  {id:13, userId:3, parkId:'rock',   serviceId:'vr',       date:isoDaysAgo(5), price:4000, count:9},
+];
+sales.forEach(s => s.sum = s.price * s.count);
+
+/* ---------- Sidebar / role switching ---------- */
+const userSelect = document.getElementById('userSelect');
+USERS.forEach(u=>{
+  const o = document.createElement('option');
+  o.value = u.id; o.textContent = u.name;
+  userSelect.appendChild(o);
+});
+userSelect.value = currentUserId;
+userSelect.addEventListener('change', ()=>{
+  currentUserId = Number(userSelect.value);
+  editingId = null;
+  renderAll();
+});
+
+function renderRightsChips(){
+  const u = userById(currentUserId);
+  const items = [
+    ['Прошлые даты', u.canPast],
+    ['Смена даты', u.canChangeDate],
+    ['Редактирование', u.canEdit],
+    ['Удаление', u.canDelete],
+  ];
+  document.getElementById('rightsChips').innerHTML = items.map(([label,on])=>
+    `<span class="chip ${on?'on':''}">${label}</span>`
+  ).join('');
+}
+
+/* ---------- Tabs ---------- */
+document.querySelectorAll('.nav button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const tab = btn.dataset.tab;
+    document.getElementById('tab-sales').style.display = tab==='sales' ? '' : 'none';
+    document.getElementById('tab-history').style.display = tab==='history' ? '' : 'none';
+    if(tab==='history') renderHistory();
+  });
+});
+
+/* ---------- Sales form ---------- */
+const dateEl = document.getElementById('f-date');
+const parkEl = document.getElementById('f-park');
+const serviceEl = document.getElementById('f-service');
+const countEl = document.getElementById('f-count');
+const priceEl = document.getElementById('f-price');
+const sumEl = document.getElementById('f-sum');
+const form = document.getElementById('saleForm');
+const cancelEditBtn = document.getElementById('cancelEditBtn');
+const editingFlag = document.getElementById('editingFlag');
+
+function fillSelect(el, options, disabledIfSingle){
+  el.innerHTML = '';
+  options.forEach(o=>{
+    const opt = document.createElement('option');
+    opt.value = o.value; opt.textContent = o.label;
+    el.appendChild(opt);
+  });
+  el.disabled = disabledIfSingle && options.length===1;
+}
+
+function setupFormForUser(){
+  const u = userById(currentUserId);
+  fillSelect(parkEl, u.parks.map(id=>({value:id, label:park(id).name})), true);
+  fillSelect(serviceEl, u.services.map(id=>({value:id, label:service(id).name})), true);
+
+  dateEl.value = todayIso();
+  if(!u.canPast){ dateEl.min = todayIso(); dateEl.max = todayIso(); }
+  else { dateEl.removeAttribute('min'); dateEl.removeAttribute('max'); }
+
+  countEl.value = ''; priceEl.value = '';
+  updateSum(); clearErrors();
+  document.getElementById('duplicateBanner').innerHTML = '';
+}
+
+function updateSum(){
+  const c = Number(countEl.value) || 0;
+  const p = Number(priceEl.value) || 0;
+  sumEl.textContent = money(c*p);
+  sumEl.classList.add('pulse');
+  setTimeout(()=>sumEl.classList.remove('pulse'), 150);
+}
+countEl.addEventListener('input', updateSum);
+priceEl.addEventListener('input', updateSum);
+
+function clearErrors(){
+  document.getElementById('err-date').textContent = '';
+  document.getElementById('err-count').textContent = '';
+  document.getElementById('err-price').textContent = '';
+}
+
+function findDuplicate(userId, parkId, serviceId, date, excludeId){
+  return sales.find(s => s.userId===userId && s.parkId===parkId && s.serviceId===serviceId && s.date===date && s.id!==excludeId);
+}
+
+function loadIntoForm(sale){
+  editingId = sale.id;
+  parkEl.value = sale.parkId;
+  serviceEl.value = sale.serviceId;
+  dateEl.value = sale.date;
+  const u = userById(currentUserId);
+  dateEl.disabled = !u.canChangeDate;
+  countEl.value = sale.count;
+  priceEl.value = sale.price;
+  updateSum();
+  cancelEditBtn.style.display = '';
+  editingFlag.textContent = `Редактируется запись №${sale.id}`;
+  document.getElementById('duplicateBanner').innerHTML = '';
+  document.querySelector('[data-tab="sales"]').click();
+}
+
+cancelEditBtn.addEventListener('click', ()=>{
+  editingId = null;
+  cancelEditBtn.style.display = 'none';
+  editingFlag.textContent = '';
+  dateEl.disabled = false;
+  setupFormForUser();
+});
+
+function showDuplicateBanner(existing){
+  document.getElementById('duplicateBanner').innerHTML = `
+    <div class="banner warn">
+      <span>Продажа по этой услуге, миру и дате уже внесена (запись №${existing.id}, ${money(existing.sum)}).</span>
+      <div class="banner-actions">
+        <button type="button" class="btn btn-ghost" id="editExisting">Редактировать существующую</button>
+        <button type="button" class="btn btn-ghost" id="dismissDup">Отмена</button>
+      </div>
+    </div>`;
+  document.getElementById('editExisting').addEventListener('click', ()=> loadIntoForm(existing));
+  document.getElementById('dismissDup').addEventListener('click', ()=>{ document.getElementById('duplicateBanner').innerHTML = ''; });
+}
+
+function showToast(text){
+  const t = document.getElementById('toast');
+  document.getElementById('toastText').textContent = text;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+form.addEventListener('submit', (e)=>{
+  e.preventDefault();
+  clearErrors();
+  document.getElementById('duplicateBanner').innerHTML = '';
+
+  const u = userById(currentUserId);
+  const parkId = parkEl.value;
+  const serviceId = serviceEl.value;
+  const date = dateEl.value;
+  const count = Number(countEl.value);
+  const price = Number(priceEl.value);
+
+  let ok = true;
+  if(!date){ document.getElementById('err-date').textContent = 'Укажите дату.'; ok = false; }
+  if(!Number.isInteger(count) || count <= 0){
+    document.getElementById('err-count').textContent = 'Количество должно быть целым числом больше 0.'; ok = false;
+  }
+  if(!(price >= 0)){
+    document.getElementById('err-price').textContent = 'Цена не может быть отрицательной.'; ok = false;
+  }
+  if(!u.parks.includes(parkId) || !u.services.includes(serviceId)){
+    document.getElementById('duplicateBanner').innerHTML = `<div class="banner err">Выбранный мир парка или услуга недоступны вашей роли.</div>`;
+    ok = false;
+  }
+  if(date && date !== todayIso() && !u.canPast && editingId===null){
+    document.getElementById('err-date').textContent = 'Роль не позволяет вносить продажи за прошедшие даты.';
+    ok = false;
+  }
+  if(!ok) return;
+
+  const dup = findDuplicate(currentUserId, parkId, serviceId, date, editingId);
+  if(dup){ showDuplicateBanner(dup); return; }
+
+  if(editingId){
+    if(!u.canEdit){
+      document.getElementById('duplicateBanner').innerHTML = `<div class="banner err">У роли нет прав на редактирование продаж.</div>`;
+      return;
+    }
+    const s = sales.find(x=>x.id===editingId);
+    s.parkId = parkId; s.serviceId = serviceId; s.date = date;
+    s.count = count; s.price = price; s.sum = count*price;
+    showToast(`Запись №${s.id} обновлена`);
+    editingId = null; cancelEditBtn.style.display = 'none'; editingFlag.textContent = ''; dateEl.disabled = false;
+  } else {
+    const s = {id:nextId++, userId:currentUserId, parkId, serviceId, date, count, price, sum:count*price};
+    sales.push(s);
+    showToast('Продажа сохранена');
+  }
+  setupFormForUser();
+});
+
+/* ---------- History ---------- */
+const hFrom = document.getElementById('h-from');
+const hTo = document.getElementById('h-to');
+const hPark = document.getElementById('h-park');
+const hService = document.getElementById('h-service');
+
+function setupHistoryFilters(){
+  const u = userById(currentUserId);
+  fillSelect(hPark, [{value:'', label:'Все доступные миры'}, ...u.parks.map(id=>({value:id, label:park(id).name}))], false);
+  fillSelect(hService, [{value:'', label:'Все доступные услуги'}, ...u.services.map(id=>({value:id, label:service(id).name}))], false);
+  hFrom.value = isoDaysAgo(13);
+  hTo.value = todayIso();
+}
+
+[hFrom, hTo, hPark, hService].forEach(el => el && el.addEventListener('change', renderHistory));
+document.getElementById('resetFilters').addEventListener('click', ()=>{ setupHistoryFilters(); renderHistory(); });
+
+function renderHistory(){
+  const u = userById(currentUserId);
+  const parkFilter = hPark.value || null;
+  const serviceFilter = hService.value || null;
+
+  const rows = sales.filter(s =>
+    u.parks.includes(s.parkId) &&
+    u.services.includes(s.serviceId) &&
+    (!parkFilter || s.parkId===parkFilter) &&
+    (!serviceFilter || s.serviceId===serviceFilter) &&
+    (!hFrom.value || s.date >= hFrom.value) &&
+    (!hTo.value || s.date <= hTo.value)
+  ).sort((a,b)=> b.date.localeCompare(a.date) || b.id - a.id);
+
+  const body = document.getElementById('historyBody');
+  if(rows.length === 0){
+    body.innerHTML = `<tr class="empty-row"><td colspan="8">Нет продаж за выбранный период и фильтры.</td></tr>`;
+  } else {
+    body.innerHTML = rows.map(s=>{
+      const svc = service(s.serviceId);
+      const pk = park(s.parkId);
+      const canEditThis = u.canEdit && (u.id===4 || s.userId===u.id);
+      const canDeleteThis = u.canDelete && (u.id===4 || s.userId===u.id);
+      return `
+        <tr>
+          <td>${s.date.split('-').reverse().join('.')}</td>
+          <td><span class="park-tag"><span class="sw" style="background:${pk.color}"></span>${pk.name}</span></td>
+          <td><span class="svc-tag" style="--tint:${svc.color}1A;--col:${svc.color}">${svc.name}</span></td>
+          <td>${s.count}</td>
+          <td>${money(s.price)}</td>
+          <td>${money(s.sum)}</td>
+          <td class="muted-cell">${userById(s.userId).name}</td>
+          <td>
+            <div class="row-actions">
+              ${canEditThis ? `<button class="icon-btn" data-edit="${s.id}">Изменить</button>` : ''}
+              ${canDeleteThis ? `<button class="icon-btn danger" data-del="${s.id}">Удалить</button>` : ''}
+            </div>
+          </td>
+        </tr>`;
+    }).join('');
+  }
+
+  document.getElementById('totalCount').textContent = rows.reduce((a,s)=>a+s.count,0).toLocaleString('ru-RU');
+  document.getElementById('totalSum').textContent = money(rows.reduce((a,s)=>a+s.sum,0));
+
+  body.querySelectorAll('[data-edit]').forEach(btn=>{
+    btn.addEventListener('click', ()=> loadIntoForm(sales.find(s=>s.id===Number(btn.dataset.edit))));
+  });
+  body.querySelectorAll('[data-del]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const id = Number(btn.dataset.del);
+      sales = sales.filter(s=>s.id!==id);
+      showToast('Запись удалена');
+      renderHistory();
+    });
+  });
+}
+
+/* ---------- Init ---------- */
+function renderAll(){
+  userSelect.value = currentUserId;
+  renderRightsChips();
+  setupFormForUser();
+  setupHistoryFilters();
+  renderHistory();
+}
+renderAll();
+</script>
+</body>
+</html>

@@ -1,0 +1,338 @@
+.filters {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  margin-bottom: 18px;
+}
+
+/* Авторские стили перебивают браузерное [hidden], поэтому правило нужно явно. */
+.filters[hidden] {
+  display: none;
+}
+
+.filters > * {
+  min-width: 160px;
+  flex: 1 1 160px;
+}
+
+.filterActions {
+  margin-left: auto;
+  flex: 0 0 auto;
+  min-width: 0;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.filtersToggle {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .filters > * {
+    flex-basis: 100%;
+  }
+
+  /* Две даты помещаются в строку — это половина высоты блока фильтров. */
+  .filters > .dateField {
+    flex-basis: calc(50% - 7px);
+    min-width: 0;
+  }
+
+  .filterActions {
+    margin-left: 0;
+  }
+
+  .filterActions > * {
+    flex: 1 1 auto;
+  }
+
+  /* Сводка фильтров: свёрнутый вид на телефоне */
+  .filtersToggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 48px;
+    padding: 8px 12px;
+    margin-bottom: 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-s);
+    background: #fff;
+    cursor: pointer;
+    text-align: left;
+  }
+
+  .filtersToggleTitle {
+    font-weight: 600;
+    flex: none;
+  }
+
+  .filtersToggleSummary {
+    flex: 1;
+    min-width: 0;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .filtersToggleChevron {
+    flex: none;
+    font-size: 10px;
+    color: var(--ink-soft);
+  }
+}
+
+.notice {
+  margin-bottom: 16px;
+}
+
+/* Таблица прокручивается внутри своего контейнера, страница — нет. */
+.tableWrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+  min-width: 900px;
+}
+
+.table thead th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--ink-soft);
+  border-bottom: 1px solid var(--line);
+  padding: 8px 10px;
+  font-size: 12.5px;
+  white-space: nowrap;
+}
+
+.table tbody td {
+  padding: 10px;
+  border-bottom: 1px solid #f0edf3;
+  vertical-align: middle;
+}
+
+.table tbody tr:hover {
+  background: #faf8fc;
+}
+
+.numeric {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.strong {
+  font-weight: 600;
+}
+
+.muted {
+  color: var(--ink-soft);
+}
+
+.empty {
+  text-align: center;
+  color: var(--ink-soft);
+  padding: 34px 10px;
+}
+
+.rowActions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* В таблице кнопки держим в одну строку, иначе строки разъезжаются по высоте. */
+.table .rowActions {
+  flex-wrap: nowrap;
+}
+
+.iconBtn {
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: var(--radius-s);
+  padding: 5px 9px;
+  cursor: pointer;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.iconBtn:hover {
+  border-color: var(--ink-soft);
+}
+
+.iconDanger {
+  color: var(--danger);
+}
+
+.iconDanger:hover {
+  border-color: var(--danger);
+}
+
+/* карточки вместо таблицы на узких экранах */
+.cards {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .tableWrap {
+    display: none;
+  }
+
+  .cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+.card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-s);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card .rowActions {
+  margin-top: 4px;
+}
+
+.card .rowActions > * {
+  flex: 1 1 0;
+  min-height: 44px;
+}
+
+.cardHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.cardDate {
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+.cardMeta {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+
+.cardSkeleton {
+  height: 120px;
+  border-radius: var(--radius-s);
+  background: linear-gradient(90deg, #ece8f0 25%, #f6f3f9 50%, #ece8f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.totals {
+  padding-top: 14px;
+  margin-top: 14px;
+  border-top: 2px solid var(--line);
+}
+
+.totalsNote {
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-bottom: 10px;
+}
+
+.totalsRows {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 480px) {
+  .totalsRows,
+  .totalGroup {
+    gap: 16px;
+  }
+
+  .totalGroup + .totalGroup {
+    padding-left: 0;
+    border-left: none;
+    border-top: 1px solid var(--line);
+    padding-top: 12px;
+    width: 100%;
+  }
+}
+
+.totalGroup {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+/* Разные валюты не должны читаться как один общий итог. */
+.totalGroup + .totalGroup {
+  padding-left: 28px;
+  border-left: 1px solid var(--line);
+}
+
+.totalItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.totalLabel {
+  font-size: 12px;
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+
+.totalValue {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.pageInfo {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+
+.deleteNote {
+  margin-top: 10px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+
+/* Данные перезапрашиваются: старые строки видно, но они явно неактивны. */
+.refreshing {
+  opacity: 0.5;
+  transition: opacity 0.15s ease;
+}

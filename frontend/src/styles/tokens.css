@@ -1,0 +1,91 @@
+/* Брендбук Avatariya — палитра перенесена из прототипа sales-mvp-avatariya.html */
+:root {
+  --bg: #eaeaea;
+  --panel: #ffffff;
+  --ink: #17121c;
+  --ink-soft: #6b6473;
+  --line: #e1dce6;
+
+  --purple-deep: #6a02c8;
+  --purple: #780bdb;
+  --purple-bright: #9520ff;
+  --purple-tint: #f3e9fc;
+
+  --sidebar: #150a22;
+  --sidebar-ink: #e9e3ef;
+  --sidebar-muted: #9c8fb0;
+  --sidebar-line: #34243f;
+
+  --danger: #d64550;
+  --danger-tint: #fbe7e8;
+  --danger-line: #efb3b8;
+
+  --success: #008c15;
+
+  --radius-s: 6px;
+  --radius-m: 12px;
+
+  --font-display: 'Montserrat', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+
+  --shadow-modal: 0 24px 60px rgba(20, 5, 40, 0.32);
+  --shadow-toast: 0 10px 26px rgba(20, 5, 40, 0.28);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 14.5px;
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+/* На телефонах iOS зумит форму при фокусе на поле меньше 16px */
+@media (max-width: 640px) {
+  input,
+  select {
+    font-size: 16px;
+  }
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+:focus-visible {
+  outline: 2px solid var(--purple-bright);
+  outline-offset: 1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

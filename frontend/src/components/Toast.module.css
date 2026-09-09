@@ -1,0 +1,60 @@
+.stack {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 60;
+  max-width: min(420px, calc(100vw - 32px));
+}
+
+@media (max-width: 640px) {
+  .stack {
+    right: 16px;
+    left: 16px;
+    bottom: 16px;
+    max-width: none;
+  }
+}
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 18px;
+  border-radius: var(--radius-s);
+  font-size: 13.5px;
+  color: #fff;
+  box-shadow: var(--shadow-toast);
+  animation: slide-in 0.22s ease;
+  overflow-wrap: anywhere;
+}
+
+.success {
+  background: var(--sidebar);
+}
+
+.error {
+  background: #7a1f28;
+}
+
+.icon {
+  flex: none;
+  font-weight: 700;
+}
+
+.success .icon {
+  color: var(--purple-bright);
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

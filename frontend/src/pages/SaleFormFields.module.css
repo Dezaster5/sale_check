@@ -1,0 +1,45 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+@media (max-width: 1000px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* В модалке пять полей в ряд не помещаются — раскладываем в две колонки. */
+.compact {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 560px) {
+  .compact {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.sumRow {
+  margin-top: 16px;
+  max-width: 260px;
+}
+
+.sum {
+  border: 1px dashed #c9a9ee;
+  border-radius: var(--radius-s);
+  padding: 9px 10px;
+  background: var(--purple-tint);
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: var(--purple-deep);
+  overflow-wrap: anywhere;
+}
