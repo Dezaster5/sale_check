@@ -17,11 +17,13 @@ export const UZS: Currency = { code: 'UZS', symbol: 'сўм', name: 'сум' }
 export const DEFAULT_CURRENCY = KZT
 
 /**
- * Города Узбекистана. Сверка идёт по названию: в справочнике city_name
- * может быть заполнен по-русски, по-узбекски или латиницей.
+ * Слова, по которым узнаётся Узбекистан. Сверка идёт по отдельным словам:
+ * в справочнике название может быть заполнено по-русски, по-узбекски или
+ * латиницей, а рядом стоять лишнее («г. Ташкент», «Ташкент, Узбекистан»).
  */
-const UZ_CITY_NAMES = new Set(
+const UZ_WORDS = new Set(
   [
+    'узбекистан', 'uzbekistan',
     'ташкент', 'toshkent', 'tashkent',
     'самарканд', 'samarqand', 'samarkand',
     'бухара', 'buxoro', 'bukhara',
@@ -50,7 +52,7 @@ const UZ_CITY_NAMES = new Set(
  * Как только справочник заполнят, переменная станет не нужна.
  */
 const UZ_CITY_IDS: ReadonlySet<number> = new Set(
-  (import.meta.env.VITE_UZ_CITY_IDS ?? '')
+  (import.meta.env?.VITE_UZ_CITY_IDS ?? '')
     .split(',')
     .map((part) => Number.parseInt(part.trim(), 10))
     .filter((value) => Number.isFinite(value)),
@@ -61,25 +63,65 @@ function normalize(value: string): string {
 }
 
 /**
+ * Разбивает строку на слова: «г. Ташкент» и «Avatariya Tashkent City»
+ * дают слово «ташкент». Сверять целиком нельзя — название почти никогда
+ * не приходит одним чистым словом.
+ */
+function words(value?: string | null): string[] {
+  if (typeof value !== 'string') return []
+  return normalize(value)
+    .split(/[^\p{L}\p{N}]+/u)
+    .filter(Boolean)
+}
+
+function mentionsUzbekistan(value?: string | null): boolean {
+  return words(value).some((word) => UZ_WORDS.has(word))
+}
+
+/**
+ * Валюта по городу. Возвращает null, когда город неизвестен: справочник
+ * заполнен не везде, и city_name приходит пустой строкой или null.
+ * Отличать «город неизвестен» от «город не узбекский» обязательно —
+ * иначе незаполненный справочник молча выдаётся за Казахстан.
+ */
+function currencyFromCity(
+  cityId?: number | null,
+  cityName?: string | null,
+): Currency | null {
+  if (typeof cityId === 'number' && UZ_CITY_IDS.has(cityId)) return UZS
+
+  const cityWords = words(cityName)
+  if (cityWords.length === 0) return null
+
+  return cityWords.some((word) => UZ_WORDS.has(word)) ? UZS : KZT
+}
+
+/**
  * Валюта по городу парка.
- * Город может прийти пустой строкой или null (справочник заполнен не везде) —
- * в этом случае возвращается валюта по умолчанию, интерфейс не должен падать.
+ * Город может прийти пустой строкой или null — тогда возвращается валюта
+ * по умолчанию, интерфейс не должен падать.
  */
 export function currencyForCity(
   cityId?: number | null,
   cityName?: string | null,
 ): Currency {
-  if (typeof cityId === 'number' && UZ_CITY_IDS.has(cityId)) return UZS
-
-  const name = typeof cityName === 'string' ? normalize(cityName) : ''
-  if (name && UZ_CITY_NAMES.has(name)) return UZS
-
-  return DEFAULT_CURRENCY
+  return currencyFromCity(cityId, cityName) ?? DEFAULT_CURRENCY
 }
 
+/**
+ * Валюта по парку. Если город в справочнике не заполнен, страна узнаётся
+ * по названию парка («Avatariya Tashkent City»). Заполненный город всегда
+ * главнее названия: он ведётся в справочнике и точнее.
+ */
 export function currencyForPark(park?: Park | null): Currency {
   if (!park) return DEFAULT_CURRENCY
-  return currencyForCity(park.city_id, park.city_name)
+
+  const byCity = currencyFromCity(park.city_id, park.city_name)
+  if (byCity) return byCity
+
+  if (mentionsUzbekistan(park.park_name)) return UZS
+
+  return DEFAULT_CURRENCY
 }
 
 /** Есть ли в наборе парков больше одной валюты — от этого зависит вид итогов. */
