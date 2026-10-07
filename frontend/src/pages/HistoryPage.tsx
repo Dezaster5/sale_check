@@ -7,7 +7,7 @@ import { Modal } from '../components/Modal'
 import { Skeleton, SkeletonRows } from '../components/Skeleton'
 import { useToast } from '../components/Toast'
 import { currenciesOf, currencyForPark } from '../lib/currency'
-import { formatAmount, formatCount, formatDate, shiftDate } from '../lib/format'
+import { formatAmount, formatCount, formatDate, formatDateTime, shiftDate } from '../lib/format'
 import { exportSalesToExcel } from '../lib/excel'
 import { MOBILE_QUERY, useMediaQuery } from '../lib/useMediaQuery'
 import { parkColor, productColor } from '../lib/palette'
@@ -285,17 +285,18 @@ export function HistoryPage({
                 <th className={styles.numeric}>Цена</th>
                 <th className={styles.numeric}>Сумма</th>
                 <th>Пользователь</th>
+                <th>Внесено</th>
                 {showActions ? <th aria-label="Действия" /> : null}
               </tr>
             </thead>
             <tbody>
               {salesQuery.isPending ? (
-                <SkeletonRows rows={6} columns={showActions ? 8 : 7} />
+                <SkeletonRows rows={6} columns={showActions ? 9 : 8} />
               ) : null}
 
               {isEmpty ? (
                 <tr>
-                  <td className={styles.empty} colSpan={showActions ? 8 : 7}>
+                  <td className={styles.empty} colSpan={showActions ? 9 : 8}>
                     Продаж за выбранный период нет.
                   </td>
                 </tr>
@@ -337,6 +338,9 @@ export function HistoryPage({
                       {formatAmount(sale.sale_sum, currency)}
                     </td>
                     <td className={styles.muted}>{sale.user_full_name || sale.username}</td>
+                    <td className={`${styles.muted} ${styles.nowrap}`}>
+                      {formatDateTime(sale.created_at)}
+                    </td>
                     {showActions ? (
                       <td>
                         <div className={styles.rowActions}>
@@ -403,7 +407,10 @@ export function HistoryPage({
                 <div className={styles.cardMeta}>
                   {formatCount(sale.count)} шт × {formatAmount(sale.price, currency)}
                 </div>
-                <div className={styles.cardMeta}>{sale.user_full_name || sale.username}</div>
+                <div className={styles.cardMeta}>
+                  {sale.user_full_name || sale.username} · внесено{' '}
+                  {formatDateTime(sale.created_at)}
+                </div>
                 {showActions ? (
                   <div className={styles.rowActions}>
                     {canEdit ? (

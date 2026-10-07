@@ -47,6 +47,20 @@ export function formatDate(iso: string | null | undefined): string {
   return `${day}.${month}.${year}`
 }
 
+/**
+ * ISO «2026-09-08T14:32:10+05:00» → «08.09.2026 14:32».
+ * Время берётся как есть из строки, без Date: сервер отдаёт его по местному
+ * времени парков (+05:00 и в Казахстане, и в Ташкенте), а пересчёт в пояс
+ * браузера показал бы человеку в другом поясе не то время, что в парке.
+ */
+export function formatDateTime(iso: string | null | undefined): string {
+  if (!iso) return '—'
+  const match = /^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})/.exec(iso)
+  if (!match) return formatDate(iso)
+  const [, year, month, day, hours, minutes] = match
+  return `${day}.${month}.${year} ${hours}:${minutes}`
+}
+
 /** Сдвиг ISO-даты на N дней без участия часового пояса браузера. */
 export function shiftDate(iso: string, days: number): string {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso)

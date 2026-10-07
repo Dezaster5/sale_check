@@ -1,6 +1,6 @@
 import type { Sale } from '../api/types'
 import { currencyForPark } from './currency'
-import { formatDate, toNumber } from './format'
+import { formatDate, formatDateTime, toNumber } from './format'
 
 export interface ExportMeta {
   /** Подпись периода и фильтров в шапке листа. */
@@ -21,6 +21,7 @@ const HEADERS = [
   { title: 'Сумма', width: 16 },
   { title: 'Валюта', width: 10 },
   { title: 'Пользователь', width: 24 },
+  { title: 'Внесено', width: 17 },
 ] as const
 
 const BRAND = 'FF780BDB'
@@ -83,6 +84,7 @@ export async function exportSalesToExcel(sales: Sale[], meta: ExportMeta): Promi
       toNumber(sale.sale_sum),
       currency.code,
       sale.user_full_name || sale.username,
+      formatDateTime(sale.created_at),
     ])
     row.getCell(6).numFmt = MONEY_FORMAT
     row.getCell(7).numFmt = MONEY_FORMAT
@@ -118,6 +120,7 @@ export async function exportSalesToExcel(sales: Sale[], meta: ExportMeta): Promi
       '',
       bucket.sum,
       code,
+      '',
       '',
     ])
     row.font = { bold: true }
